@@ -7840,6 +7840,13 @@ def cmd_logs(args):
     )
 
 
+def cmd_evolve(args):
+    """Queue or run offline Hermes self-evolution requests."""
+    from hermes_cli.evolve import evolve_command
+
+    evolve_command(args)
+
+
 def main():
     """Main entry point for hermes CLI."""
     from hermes_cli._parser import build_top_level_parser
@@ -8945,6 +8952,99 @@ Examples:
             skills_command(args)
 
     skills_parser.set_defaults(func=cmd_skills)
+
+    # =========================================================================
+    # evolve command
+    # =========================================================================
+    evolve_parser = subparsers.add_parser(
+        "evolve",
+        help="Queue offline self-evolution requests",
+        description=(
+            "Create PR-gated self-evolution requests for Hermes skills, tool "
+            "descriptions, prompt sections, or code. Runs offline and never "
+            "patches active sessions."
+        ),
+    )
+    evolve_subparsers = evolve_parser.add_subparsers(dest="evolve_action")
+
+    def _add_evolve_request_args(p):
+        p.add_argument(
+            "--target",
+            required=True,
+            choices=["skill", "tool-description", "prompt-section", "code"],
+            help="Artifact type to optimize",
+        )
+        p.add_argument("--name", required=True, help="Skill/tool/prompt/code target name")
+        p.add_argument("--reason", required=True, help="Observed weakness or quality signal")
+        p.add_argument(
+            "--eval-source",
+            default="sessiondb",
+            choices=["sessiondb", "synthetic", "golden", "auto"],
+            help="Evaluation dataset source",
+        )
+        p.add_argument("--iterations", type=int, default=10, help="Optimizer iterations")
+        p.add_argument(
+            "--hermes-agent-repo",
+            default=None,
+            help="Hermes agent checkout to optimize (default: current working directory)",
+        )
+        p.add_argument(
+            "--external-runner-repo",
+            default=None,
+            help=(
+                "hermes-agent-self-evolution checkout "
+                "(default: $HERMES_HOME/hermes-agent-self-evolution)"
+            ),
+        )
+        p.add_argument(
+            "--external-runner-source-url",
+            default=None,
+            help=(
+                "Git URL to clone the external runner from "
+                "(default: centralcloud Forgejo mirror)"
+            ),
+        )
+        p.add_argument(
+            "--forgejo-repo",
+            default=None,
+            help=(
+                "Forgejo repo for optimizer branches "
+                "(default: centralcloud/hermes-agent-self-evolution)"
+            ),
+        )
+        p.add_argument("--json", action="store_true", help="Print machine-readable JSON")
+
+    evolve_queue = evolve_subparsers.add_parser(
+        "queue",
+        help="Queue a self-evolution request and write request artifacts",
+    )
+    _add_evolve_request_args(evolve_queue)
+
+    evolve_plan = evolve_subparsers.add_parser(
+        "plan",
+        help="Alias for queue; writes reviewable request artifacts first",
+    )
+    _add_evolve_request_args(evolve_plan)
+
+    evolve_run = evolve_subparsers.add_parser(
+        "run",
+        help="Dry-run or execute the external optimizer for an existing request",
+    )
+    evolve_run.add_argument("request_id", help="Request id under HERMES_HOME/evolution")
+    evolve_run.add_argument(
+        "--execute",
+        action="store_true",
+        help="Actually run the external optimizer. Omitted means dry-run only.",
+    )
+    evolve_run.add_argument("--json", action="store_true", help="Print machine-readable JSON")
+
+    evolve_status = evolve_subparsers.add_parser(
+        "status",
+        help="Show queued self-evolution requests",
+    )
+    evolve_status.add_argument("--json", action="store_true", help="Print machine-readable JSON")
+
+    evolve_parser.set_defaults(func=cmd_evolve)
 
     # =========================================================================
     # plugins command

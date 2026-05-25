@@ -2,7 +2,7 @@
   description = "Hermes Agent - AI agent framework by Nous Research";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
@@ -23,6 +23,15 @@
       url = "github:jeslie0/npm-lockfile-fix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+  };
+
+  nixConfig = {
+    extra-substituters = [
+      "https://cache.centralcloud.com/default"
+    ];
+    extra-trusted-public-keys = [
+      "default:ywfU21WX06iOn2Ec2lae1jYh4w8LO4IQkmp06vJzsk8="
+    ];
   };
 
   outputs =

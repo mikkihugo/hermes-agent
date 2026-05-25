@@ -74,7 +74,7 @@ This module requires NixOS. For non-NixOS systems (macOS, other Linux distros), 
 # /etc/nixos/flake.nix (or your system flake)
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     hermes-agent.url = "github:NousResearch/hermes-agent";
   };
 
