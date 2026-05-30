@@ -945,9 +945,9 @@ class TestKimiCodeStatusAutoDetect:
 
     def test_env_override_wins(self, monkeypatch):
         monkeypatch.setenv("KIMI_API_KEY", "sk-kimi-test-key")
-        monkeypatch.setenv("KIMI_BASE_URL", "https://override.example/v1")
+        monkeypatch.setenv("KIMI_BASE_URL", "https://api.kimicode.com/coding")
         status = get_api_key_provider_status("kimi-coding")
-        assert status["base_url"] == "https://override.example/v1"
+        assert status["base_url"] == "https://api.kimicode.com/coding"
 
 
 class TestKimiCodeCredentialAutoDetect:

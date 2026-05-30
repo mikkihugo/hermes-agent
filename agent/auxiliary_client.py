@@ -827,7 +827,7 @@ def _endpoint_speaks_anthropic_messages(base_url: str) -> bool:
 
     - Any URL ending in ``/anthropic`` (MiniMax, Zhipu GLM, LiteLLM proxies,
       Anthropic-compatible gateways).
-    - ``api.kimi.com/coding`` (Kimi Coding Plan — the /coding route only
+    - ``api.kimicode.com/coding`` (Kimi Coding Plan — the /coding route only
       speaks Claude-Code's native Anthropic shape; ``chat.completions``
       returns 404 on Anthropic-only model aliases like ``kimi-for-coding``).
     - ``api.anthropic.com`` (native Anthropic).
@@ -840,7 +840,7 @@ def _endpoint_speaks_anthropic_messages(base_url: str) -> bool:
     hostname = base_url_hostname(normalized)
     if hostname == "api.anthropic.com":
         return True
-    if hostname == "api.kimi.com" and "/coding" in normalized:
+    if hostname in {"api.kimi.com", "api.kimicode.com"} and "/coding" in normalized:
         return True
     return False
 
@@ -1091,7 +1091,7 @@ def _resolve_api_key_provider() -> Tuple[Optional[OpenAI], Optional[str]]:
                 if is_native_gemini_base_url(base_url):
                     return GeminiNativeClient(api_key=api_key, base_url=base_url), model
             extra = {}
-            if base_url_host_matches(base_url, "api.kimi.com"):
+            if base_url_host_matches(base_url, "api.kimi.com") or base_url_host_matches(base_url, "api.kimicode.com"):
                 extra["default_headers"] = {"User-Agent": "claude-code/0.1.0"}
             elif base_url_host_matches(base_url, "api.githubcopilot.com"):
                 from hermes_cli.models import copilot_default_headers
@@ -1119,7 +1119,7 @@ def _resolve_api_key_provider() -> Tuple[Optional[OpenAI], Optional[str]]:
             if is_native_gemini_base_url(base_url):
                 return GeminiNativeClient(api_key=api_key, base_url=base_url), model
         extra = {}
-        if base_url_host_matches(base_url, "api.kimi.com"):
+        if base_url_host_matches(base_url, "api.kimi.com") or base_url_host_matches(base_url, "api.kimicode.com"):
             extra["default_headers"] = {"User-Agent": "claude-code/0.1.0"}
         elif base_url_host_matches(base_url, "api.githubcopilot.com"):
             from hermes_cli.models import copilot_default_headers
@@ -1884,7 +1884,7 @@ def _to_async_client(sync_client, model: str, is_vision: bool = False):
         async_kwargs["default_headers"] = copilot_request_headers(
             is_agent_turn=True, is_vision=is_vision
         )
-    elif base_url_host_matches(sync_base_url, "api.kimi.com"):
+    elif base_url_host_matches(sync_base_url, "api.kimi.com") or base_url_host_matches(sync_base_url, "api.kimicode.com"):
         async_kwargs["default_headers"] = {"User-Agent": "claude-code/0.1.0"}
     return AsyncOpenAI(**async_kwargs), model
 
@@ -2093,7 +2093,7 @@ def resolve_provider_client(
             _clean_base, _dq = _extract_url_query_params(custom_base)
             if _dq:
                 extra["default_query"] = _dq
-            if base_url_host_matches(custom_base, "api.kimi.com"):
+            if base_url_host_matches(custom_base, "api.kimi.com") or base_url_host_matches(custom_base, "api.kimicode.com"):
                 extra["default_headers"] = {"User-Agent": "claude-code/0.1.0"}
             elif base_url_host_matches(custom_base, "api.githubcopilot.com"):
                 from hermes_cli.copilot_auth import copilot_request_headers
@@ -2257,7 +2257,7 @@ def resolve_provider_client(
 
         # Provider-specific headers
         headers = {}
-        if base_url_host_matches(base_url, "api.kimi.com"):
+        if base_url_host_matches(base_url, "api.kimi.com") or base_url_host_matches(base_url, "api.kimicode.com"):
             headers["User-Agent"] = "claude-code/0.1.0"
         elif base_url_host_matches(base_url, "api.githubcopilot.com"):
             from hermes_cli.copilot_auth import copilot_request_headers

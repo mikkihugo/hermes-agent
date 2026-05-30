@@ -1,6 +1,6 @@
 """Regression guard: don't send Anthropic ``thinking`` to Kimi's /coding endpoint.
 
-Kimi's ``api.kimi.com/coding`` endpoint speaks the Anthropic Messages protocol
+Kimi's ``api.kimicode.com/coding`` endpoint speaks the Anthropic Messages protocol
 but has its own thinking semantics.  When ``thinking.enabled`` is present in
 the request, Kimi validates the message history and requires every prior
 assistant tool-call message to carry OpenAI-style ``reasoning_content``.
@@ -34,6 +34,8 @@ class TestKimiCodingSkipsAnthropicThinking:
             "https://api.kimi.com/coding/v1",
             "https://api.kimi.com/coding/anthropic",
             "https://api.kimi.com/coding/",
+            "https://api.kimicode.com/coding",
+            "https://api.kimicode.com/coding/v1",
         ],
     )
     def test_kimi_coding_endpoint_omits_thinking(self, base_url: str) -> None:

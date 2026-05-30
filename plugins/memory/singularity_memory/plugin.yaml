@@ -1,6 +1,0 @@
-name: singularity_memory
-version: 1.0.0
-description: "Singularity Memory — Postgres-backed memory with BM25 + vector + RRF fusion retrieval and cross-encoder reranking. Shared across Hermes, OpenClaw, and Claude Code."
-hooks:
-  - on_session_end
-  - on_memory_write

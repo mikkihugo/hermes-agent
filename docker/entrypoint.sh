@@ -83,7 +83,7 @@ fi
 
 # Sync bundled skills (manifest-based so user edits are preserved)
 if [ -d "$INSTALL_DIR/skills" ]; then
-    python3 "$INSTALL_DIR/tools/skills_sync.py"
+    PYTHONPATH="$INSTALL_DIR${PYTHONPATH:+:$PYTHONPATH}" "$INSTALL_DIR/.venv/bin/python" "$INSTALL_DIR/tools/skills_sync.py"
 fi
 
 # Final exec: two supported invocation patterns.

@@ -294,6 +294,7 @@ _URL_TO_PROVIDER: Dict[str, str] = {
     "api.moonshot.ai": "kimi-coding",
     "api.moonshot.cn": "kimi-coding-cn",
     "api.kimi.com": "kimi-coding",
+    "api.kimicode.com": "kimi-coding",
     "api.stepfun.ai": "stepfun",
     "api.stepfun.com": "stepfun",
     "api.arcee.ai": "arcee",

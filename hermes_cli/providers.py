@@ -494,7 +494,7 @@ def determine_api_mode(provider: str, base_url: str = "") -> str:
         # (e.g. kimi /coding endpoint needs anthropic_messages even on 'custom')
         if base_url:
             url_lower = base_url.rstrip("/").lower()
-            if "api.kimi.com/coding" in url_lower:
+            if "api.kimi.com/coding" in url_lower or "api.kimicode.com/coding" in url_lower:
                 return "anthropic_messages"
             if url_lower.endswith("/anthropic") or "api.anthropic.com" in url_lower:
                 return "anthropic_messages"
@@ -512,7 +512,7 @@ def determine_api_mode(provider: str, base_url: str = "") -> str:
         hostname = base_url_hostname(base_url)
         if url_lower.endswith("/anthropic") or hostname == "api.anthropic.com":
             return "anthropic_messages"
-        if hostname == "api.kimi.com" and "/coding" in url_lower:
+        if hostname in {"api.kimi.com", "api.kimicode.com"} and "/coding" in url_lower:
             return "anthropic_messages"
         if hostname == "api.openai.com":
             return "codex_responses"

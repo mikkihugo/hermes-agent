@@ -362,7 +362,8 @@ def _is_kimi_coding_endpoint(base_url: str | None) -> bool:
     normalized = _normalize_base_url_text(base_url)
     if not normalized:
         return False
-    return normalized.rstrip("/").lower().startswith("https://api.kimi.com/coding")
+    lowered = normalized.rstrip("/").lower()
+    return lowered.startswith(("https://api.kimi.com/coding", "https://api.kimicode.com/coding"))
 
 
 # Model-name prefixes that identify the Kimi / Moonshot family.  Covers
@@ -398,7 +399,8 @@ def _is_kimi_family_endpoint(base_url: str | None, model: str | None = None) -> 
     Broader than ``_is_kimi_coding_endpoint`` — matches:
 
     - Kimi's official ``/coding`` URL (legacy check, preserved)
-    - Any ``api.kimi.com`` / ``moonshot.ai`` / ``moonshot.cn`` host
+    - Any ``api.kimi.com`` / ``api.kimicode.com`` / ``moonshot.ai`` /
+      ``moonshot.cn`` host
     - Custom or proxied endpoints whose *model* name is in the Kimi / Moonshot
       family (``kimi-*``, ``moonshot-*``, ``k1.*``, ``k2.*``, …).  Users with
       ``api_mode: anthropic_messages`` on a private gateway fronting Kimi
@@ -412,7 +414,7 @@ def _is_kimi_family_endpoint(base_url: str | None, model: str | None = None) -> 
     """
     if _is_kimi_coding_endpoint(base_url):
         return True
-    for _domain in ("api.kimi.com", "moonshot.ai", "moonshot.cn"):
+    for _domain in ("api.kimi.com", "api.kimicode.com", "moonshot.ai", "moonshot.cn"):
         if base_url_host_matches(base_url or "", _domain):
             return True
     if _model_name_is_kimi_family(model):
@@ -1917,5 +1919,3 @@ def build_anthropic_kwargs(
         kwargs["extra_headers"] = {"anthropic-beta": ",".join(betas)}
 
     return kwargs
-
-
